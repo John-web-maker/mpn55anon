@@ -176,7 +176,7 @@
             }
         };
 
-        window.bukaSurat = function(data) {
+window.bukaSurat = function(data) {
             document.getElementById('inboxView').classList.add('blur-active');
             document.getElementById('suratDari').innerText = data.pengirim;
             
@@ -189,13 +189,30 @@
             document.getElementById('suratIsi').innerText = data.isi_pesan;
 
             const imgEl = document.getElementById('suratGambar');
-            // Cek apakah link ImgBB valid
-            if (data.url_gambar && data.url_gambar.startsWith('http')) {
+            
+            // RESET GAMBAR DULU
+            imgEl.src = "";
+            imgEl.style.display = 'none';
+
+            // CEK APAKAH ADA LINK GAMBAR
+            if (data.url_gambar && data.url_gambar !== "") {
+                console.log("Mencoba memuat gambar dari:", data.url_gambar);
                 imgEl.src = data.url_gambar;
-                imgEl.style.display = 'block'; 
-            } else {
-                imgEl.src = "";
-                imgEl.style.display = 'none'; 
+                imgEl.style.display = 'block';
+                
+                // Tambahin tombol darurat kalau gambar tetep pecah
+                const debugBtn = document.createElement('a');
+                debugBtn.href = data.url_gambar;
+                debugBtn.target = "_blank";
+                debugBtn.innerText = "🔗 Klik di sini kalau gambar nggak muncul";
+                debugBtn.style = "display:block; font-size:10px; color:blue; margin-top:10px; text-decoration:none;";
+                debugBtn.id = "debugLink";
+                
+                // Hapus link debug lama kalau ada
+                const oldLink = document.getElementById('debugLink');
+                if(oldLink) oldLink.remove();
+                
+                imgEl.after(debugBtn);
             }
 
             const viewer = document.getElementById('letterViewer');
