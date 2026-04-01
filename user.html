@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Anonymfess | Kirim Pesan</title>
+    <style>
+        body, html { height: 100%; margin: 0; font-family: 'Segoe UI', sans-serif; background: radial-gradient(circle, #2d3e50 0%, #1a2530 100%); display: flex; justify-content: center; align-items: center; color: #ecf0f1; }
+        .bg-image { background-image: url('image_0.png'); filter: grayscale(100%) brightness(50%); opacity: 0.15; position: absolute; width: 100%; height: 100%; background-size: cover; background-position: center; z-index: -1; }
+        .user-container { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border-radius: 20px; padding: 30px; width: 90%; max-width: 450px; border: 1px solid rgba(255, 255, 255, 0.1); box-sizing: border-box; height: 90vh; overflow-y: auto; z-index: 1;}
+        h1 { text-align: center; text-transform: uppercase; font-size: 1.5em; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; color: #a4b0be; font-size: 0.9em; }
+        input, textarea, select { width: 100%; padding: 12px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; color: #ecf0f1; font-size: 1em; box-sizing: border-box; }
+        .theme-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 10px; }
+        .theme-item { border: 2px solid transparent; border-radius: 8px; cursor: pointer; text-align: center; transition: 0.3s; padding: 5px; }
+        .theme-item.selected { border-color: #3498db; background: rgba(52, 152, 219, 0.2); }
+        .css-env { position: relative; width: 100%; padding-top: 75%; border-radius: 5px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); overflow: hidden; }
+        .css-env::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(0,0,0,0.1) 100%); clip-path: polygon(0 0, 100% 0, 50% 50%); z-index: 1; }
+        .env-icon { position: absolute; font-size: 1.5rem; z-index: 2; top: 50%; left: 50%; transform: translate(-50%, -10%); }
+        .t-netral { background-color: #d4b895; }
+        .t-cinta { background-color: #ffb6c1; }
+        .t-marah { background-color: #2c3e50; border: 1px solid #e74c3c; }
+        .t-api { background: linear-gradient(135deg, #ff416c, #ff4b2b); }
+        .t-sahabat { background-color: #fde047; }
+        .btn-send { width: 100%; padding: 15px; margin-top: 20px; background: #3498db; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; font-size: 1.1em; }
+        #status { text-align: center; margin-top: 10px; font-size: 0.9em; color: #f1c40f; }
+    </style>
+</head>
+<body>
+    <div class="bg-image"></div>
+    <div class="user-container">
+        <h1>Tulis Pesan Rahasia</h1>
+        <form id="fessForm">
+            <div class="form-group">
+                <label>Penerima:</label>
+                <select id="tujuan" required>
+                    <option value="">Pilih Nama...</option>
+                    <script>
+                        const names = ["Andi", "Budi", "Caca", "Deni", "Euis", "Fajar", "Gita", "Hadi", "Intan", "Joko", "Kiki", "Lala", "Maman", "Nina", "Opan", "Putri", "Qori", "Rina", "Siti", "Tono", "Umar", "Vina", "Wira", "Xander", "Yani", "Zaki"];
+                        names.forEach(n => document.write(`<option value="${n}">${n}</option>`));
+                    </script>
+                </select>
+            </div>
+            <input type="text" id="pengirim" placeholder="Nama samaran..." style="margin-bottom:15px" required>
+            <textarea id="isi" rows="4" placeholder="Ketik rahasiamu..." required></textarea>
+            <label style="margin-top:15px">Lampirkan Foto (Cloudinary):</label>
+            <input type="file" id="gambar" accept="image/*">
+            <div class="theme-grid">
+                <div class="theme-item selected" data-theme="netral"><div class="css-env t-netral"><span class="env-icon">✉️</span></div></div>
+                <div class="theme-item" data-theme="cinta"><div class="css-env t-cinta"><span class="env-icon">💖</span></div></div>
+                <div class="theme-item" data-theme="marah"><div class="css-env t-marah"><span class="env-icon">😡</span></div></div>
+                <div class="theme-item" data-theme="cinta_api"><div class="css-env t-api"><span class="env-icon">🔥</span></div></div>
+                <div class="theme-item" data-theme="sahabat"><div class="css-env t-sahabat"><span class="env-icon">🤝</span></div></div>
+            </div>
+            <button type="submit" class="btn-send" id="btnKirim">KIRIM PESAN 🚀</button>
+            <div id="status"></div>
+        </form>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBXsyqAMRvAXoWx8hR18vPQS1qnfzDY-9o",
+            authDomain: "infinite-blade-472912-b2.firebaseapp.com",
+            projectId: "infinite-blade-472912-b2",
+            storageBucket: "infinite-blade-472912-b2.firebasestorage.app",
+            messagingSenderId: "298780022614",
+            appId: "1:298780022614:web:b0e454c7b58e36134ca8f7"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const CLOUD_NAME = "dj4tqz7mp";
+        const UPLOAD_PRESET = "jyvupkc2";
+
+        let temaTerpilih = "netral";
+        document.querySelectorAll('.theme-item').forEach(item => {
+            item.onclick = () => {
+                document.querySelector('.theme-item.selected').classList.remove('selected');
+                item.classList.add('selected');
+                temaTerpilih = item.getAttribute('data-theme');
+            };
+        });
+
+        document.getElementById('fessForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnKirim');
+            const stat = document.getElementById('status');
+            btn.disabled = true;
+            stat.innerText = "⏳ Uploading...";
+
+            let finalUrl = "";
+            const fileInput = document.getElementById('gambar');
+            if (fileInput.files.length > 0) {
+                const formData = new FormData();
+                formData.append("file", fileInput.files[0]);
+                formData.append("upload_preset", UPLOAD_PRESET);
+                try {
+                    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method: "POST", body: formData });
+                    const result = await res.json();
+                    finalUrl = result.secure_url;
+                } catch (err) { alert("Upload Gagal!"); btn.disabled = false; return; }
+            }
+
+            try {
+                await addDoc(collection(db, "surat_kelas"), {
+                    tujuan: document.getElementById('tujuan').value,
+                    pengirim: document.getElementById('pengirim').value,
+                    isi_pesan: document.getElementById('isi').value,
+                    tema: temaTerpilih,
+                    url_gambar: finalUrl,
+                    waktu: serverTimestamp()
+                });
+                alert("TERKIRIM!");
+                location.reload();
+            } catch (err) { alert("Gagal Simpan!"); btn.disabled = false; }
+        };
+    </script>
+</body>
+</html>
