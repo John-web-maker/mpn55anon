@@ -3,65 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kirim Pesan | MPN55</title>
+    <title>Gerbang Utama | MPN55</title>
     <style>
-        body, html { min-height: 100vh; margin: 0; font-family: 'Segoe UI', sans-serif; background: #1a2530; display: flex; justify-content: center; align-items: center; color: #ecf0f1; }
-        /* FIX BACKGROUND HP DI SINI */
+        body, html { height: 100%; margin: 0; font-family: 'Segoe UI', sans-serif; background: #1a2530; display: flex; justify-content: center; align-items: center; overflow: hidden; }
         .bg-image { 
             background-image: url('image_0.png'); 
-            filter: grayscale(100%) brightness(30%); 
-            opacity: 0.25; 
-            position: fixed; /* WAJIB FIXED BIAR GAK ILANG DI HP */
-            top: 0; left: 0;
-            width: 100vw; height: 100vh; 
-            background-size: cover; 
-            background-position: center; 
-            z-index: -1; 
+            filter: grayscale(100%) brightness(35%); 
+            opacity: 0.3; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+            background-size: cover; background-position: center; z-index: -1; 
         }
-        .user-container { background: rgba(255, 255, 255, 0.07); backdrop-filter: blur(15px); border-radius: 20px; padding: 25px; width: 85%; max-width: 400px; border: 1px solid rgba(255, 255, 255, 0.1); box-sizing: border-box; margin: 20px 0; }
-        h1 { text-align: center; font-size: 1.4em; margin-bottom: 20px; }
-        label { display: block; margin-bottom: 5px; color: #a4b0be; font-size: 0.8em; }
-        input, textarea, select { width: 100%; padding: 12px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: #ecf0f1; font-size: 0.95em; box-sizing: border-box; margin-bottom: 15px; }
-        .theme-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
-        .theme-item { border: 2px solid transparent; border-radius: 8px; cursor: pointer; padding: 5px; transition: 0.3s; }
-        .theme-item.selected { border-color: #3498db; background: rgba(52, 152, 219, 0.2); }
-        .css-env { position: relative; width: 100%; padding-top: 75%; border-radius: 5px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); overflow: hidden; background: #d4b895; }
-        .btn-send { width: 100%; padding: 15px; margin-top: 15px; background: #3498db; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; }
-        #status { text-align: center; margin-top: 10px; font-size: 0.8em; color: #f1c40f; }
+        .login-container { 
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); 
+            border-radius: 20px; padding: 40px; width: 85%; max-width: 380px; text-align: center; 
+            border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5); color: #ecf0f1; 
+        }
+        input { width: 100%; padding: 12px; margin-bottom: 15px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: #ecf0f1; box-sizing: border-box; }
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: 1em; cursor: pointer; font-weight: 600; text-decoration: none; display: block; margin-bottom: 15px; }
+        .btn-admin { background: #3498db; color: white; }
+        .btn-user { background: transparent; border: 2px solid #57606f; color: #a4b0be; }
+        .separator { color: #7f8c8d; font-size: 0.8em; margin: 10px 0 20px 0; }
     </style>
 </head>
 <body>
     <div class="bg-image"></div>
-    <div class="user-container">
-        <h1>Kirim Pesan</h1>
-        <form id="fessForm">
-            <label>Untuk:</label>
-            <select id="tujuan" required>
-                <option value="">Pilih Nama...</option>
-                <script>
-                    const names = ["ADHIATAMA DWIKA NUGRAHA", "AFFANI HAYU PRABANINGTYAS", "AMELIA AMRETHA CANDRA", "ANDI PANGERAN MAULANA IBRAHIM", "ARIN VANIA INDRIATI WIDODO", "BANA HIBRIZI NAFIUDIN", "DIAZ AGUNG FATAHILLAH", "DIFNA AULYA SYAFITRI", "FERNANDA PRIMA YUDHA", "GABRIELA HAMIDA PUTRI", "HANS YURI CARNAGI GINTING", "JOANELVI SHANNOEL", "TANDELOKA DESTARA YUDHA", "MEIVA ANASTASYA BR GINTING", "MOCH. AMIL LABIB MAKARIM", "MUHAMMAD RIFQI RASYIDDIN", "NI MADE AUDY ANGELINA SUDARSANA", "NIZAR EKA MATALIPUTRI", "PUTRI SATRIA WIBAWA PANGARIBUAN", "RAIHAN ARYA RIDHAWAN", "RISCHA SITANGGANG", "RIZAL YEPTA PUTRA SIBARANI", "RONI NUR HIDAYAT", "SHERLYANA FITRIA DESWANTARI", "TOTTI ARIIQ RACHYANDY", "YOINA DOVERIANINGTYAS PARDOSI"];
-                    names.sort().forEach(n => document.write(`<option value="${n}">${n}</option>`));
-                </script>
-            </select>
-            <input type="text" id="pengirim" placeholder="Dari (Anonim)" required>
-            <textarea id="isi" rows="4" placeholder="Ketik pesan..." required></textarea>
-            <label>Lampirkan Foto (Opsional):</label>
-            <input type="file" id="gambar" accept="image/*">
-            <div class="theme-grid">
-                <div class="theme-item selected" data-theme="netral"><div class="css-env t-netral" style="background:#d4b895"></div></div>
-                <div class="theme-item" data-theme="cinta"><div class="css-env" style="background:#ffb6c1"></div></div>
-                <div class="theme-item" data-theme="marah"><div class="css-env" style="background:#2c3e50"></div></div>
-                <div class="theme-item" data-theme="cinta_api"><div class="css-env" style="background:linear-gradient(135deg, #ff416c, #ff4b2b)"></div></div>
-                <div class="theme-item" data-theme="sahabat"><div class="css-env" style="background:#fde047"></div></div>
-            </div>
-            <button type="submit" class="btn-send" id="btnKirim">KIRIM 🚀</button>
-            <div id="status"></div>
+    <div class="login-container">
+        <h1 style="font-size: 1.5em; letter-spacing: 2px;">MPN55 FESS</h1>
+        <p style="color: #a4b0be; font-size: 0.8em; margin-bottom: 30px;">Kirim pesan anonim ke teman kelas.</p>
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="Email Admin" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit" class="btn btn-admin">MASUK ADMIN</button>
         </form>
+        <div class="separator">───── ATAU ─────</div>
+        <a href="user.html" class="btn btn-user">TULIS PESAN (ANONIM)</a>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
         const firebaseConfig = {
             apiKey: "AIzaSyBXsyqAMRvAXoWx8hR18vPQS1qnfzDY-9o",
             authDomain: "infinite-blade-472912-b2.firebaseapp.com",
@@ -71,48 +50,13 @@
             appId: "1:298780022614:web:b0e454c7b58e36134ca8f7"
         };
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const CLOUD_NAME = "dj4tqz7mp";
-        const UPLOAD_PRESET = "jyvupkc2";
-
-        let temaTerpilih = "netral";
-        document.querySelectorAll('.theme-item').forEach(item => {
-            item.onclick = () => {
-                document.querySelector('.theme-item.selected').classList.remove('selected');
-                item.classList.add('selected');
-                temaTerpilih = item.getAttribute('data-theme');
-            };
-        });
-
-        document.getElementById('fessForm').onsubmit = async (e) => {
+        const auth = getAuth(app);
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            const btn = document.getElementById('btnKirim');
-            const stat = document.getElementById('status');
-            btn.disabled = true; stat.innerText = "⏳ Sedang mengirim...";
-            let finalUrl = "";
-            const fileInput = document.getElementById('gambar');
-            if (fileInput.files.length > 0) {
-                const formData = new FormData();
-                formData.append("file", fileInput.files[0]);
-                formData.append("upload_preset", UPLOAD_PRESET);
-                try {
-                    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method: "POST", body: formData });
-                    const result = await res.json();
-                    finalUrl = result.secure_url;
-                } catch (err) { alert("Upload Gagal!"); btn.disabled = false; return; }
-            }
-            try {
-                await addDoc(collection(db, "surat_kelas"), {
-                    tujuan: document.getElementById('tujuan').value,
-                    pengirim: document.getElementById('pengirim').value,
-                    isi_pesan: document.getElementById('isi').value,
-                    tema: temaTerpilih,
-                    url_gambar: finalUrl,
-                    waktu: serverTimestamp()
-                });
-                alert("TERKIRIM!"); location.reload();
-            } catch (err) { alert("Error Database!"); btn.disabled = false; }
-        };
+            signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value)
+                .then(() => { window.location.href = "admin.html"; })
+                .catch(() => { alert("Login Gagal!"); });
+        });
     </script>
 </body>
 </html>
